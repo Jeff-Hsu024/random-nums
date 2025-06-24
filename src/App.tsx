@@ -12,7 +12,6 @@ function App() {
 
   return (
     <div>
-      here is app
       <PowerLotto />
       <Lotto649 />
       <Lotto539 />
