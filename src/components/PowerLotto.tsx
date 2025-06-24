@@ -9,7 +9,7 @@ const PowerLotto = () => {
         firstAreaNumbers.push(randomNumber);
       }
     }
-    firstAreaNumbers.sort((a, b) => a - b);
+    // firstAreaNumbers.sort((a, b) => a - b);
 
     const secondAreaNumber = Math.floor(Math.random() * 8) + 1;
 
