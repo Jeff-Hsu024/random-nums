@@ -2,13 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { fetchAllLotteryRecords, type LotteryRecord } from '../services/PowerLottoService';
 
 const PowerLotto = () => {
-  const [lottoNumbers, setLottoNumbers] = useState<{ firstArea: number[]; secondArea: number | null }>({ firstArea: [], secondArea: null });
+  const [originalNumbers, setOriginalNumbers] = useState<{ firstArea: number[]; secondArea: number | null }>({ firstArea: [], secondArea: null });
+  const [uniqueNumbers, setUniqueNumbers] = useState<{ firstArea: number[]; secondArea: number | null }>({ firstArea: [], secondArea: null });
+  const [frequentNumbers, setFrequentNumbers] = useState<{ firstArea: number[]; secondArea: number | null }>({ firstArea: [], secondArea: null });
   const [historicalRecords, setHistoricalRecords] = useState<LotteryRecord[]>([]);
+  const [filterRecords, setFilterRecords] = useState<LotteryRecord[]>([]);
 
   useEffect(() => {
     const getHistoricalRecords = async () => {
       const records = await fetchAllLotteryRecords();
       setHistoricalRecords(records);
+
+      const currentYear = new Date().getFullYear();
+      const filterRecords = records.filter(record => {
+        const recordYear = new Date(record.lotteryDate).getFullYear();
+        return currentYear === recordYear
+      })
+      setFilterRecords(filterRecords)
     };
 
     getHistoricalRecords();
@@ -33,7 +43,7 @@ const PowerLotto = () => {
   };
 
   const handleGenerate = () => {
-    setLottoNumbers(generateLottoNumbers());
+    setOriginalNumbers(generateLottoNumbers());
   };
 
   const generateUniqueNumbers = () => {
@@ -48,7 +58,7 @@ const PowerLotto = () => {
 
   const getMostFrequentSpecialNumber = () => {
     const counts: { [key: number]: number } = {};
-    historicalRecords.forEach(record => {
+    filterRecords.forEach(record => {
       const specialNumber = record.specialNumber;
       counts[specialNumber] = (counts[specialNumber] || 0) + 1;
     });
@@ -67,12 +77,12 @@ const PowerLotto = () => {
   };
 
   const handleGenerateUnique = () => {
-    setLottoNumbers(generateUniqueNumbers());
+    setUniqueNumbers(generateUniqueNumbers());
   };
 
   const handleGenerateFrequent = () => {
     const frequentNumber = getMostFrequentSpecialNumber();
-    setLottoNumbers({
+    setFrequentNumbers({
       firstArea: generateUniqueNumbers().firstArea,
       secondArea: frequentNumber,
     });
@@ -85,34 +95,34 @@ const PowerLotto = () => {
       {/* Row 1: Original Random */}
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{ marginRight: '10px' }}>
-          第一區: {lottoNumbers.firstArea.join(', ')}
+          第一區: {originalNumbers.firstArea.join(', ')}
         </div>
         <div style={{ marginRight: '10px' }}>
-          第二區: {lottoNumbers.secondArea}
+          第二區: {originalNumbers.secondArea}
         </div>
-        <button onClick={handleGenerate}>隨機選號</button>
+        <button onClick={() => handleGenerate()}>隨機選號</button>
       </div>
 
       {/* Row 2: Unique Random */}
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{ marginRight: '10px' }}>
-          第一區: {lottoNumbers.firstArea.join(', ')}
+          第一區: {uniqueNumbers.firstArea.join(', ')}
         </div>
         <div style={{ marginRight: '10px' }}>
-          第二區: {lottoNumbers.secondArea}
+          第二區: {uniqueNumbers.secondArea}
         </div>
-        <button onClick={handleGenerateUnique}>第一區隨機 (不重複)</button>
+        <button onClick={() => handleGenerateUnique()}>第一區隨機 (不與歷史重複)</button>
       </div>
 
       {/* Row 3: Unique Random + Frequent Special */}
       <div style={{ display: 'flex', alignItems: 'center' }}>
         <div style={{ marginRight: '10px' }}>
-          第一區: {lottoNumbers.firstArea.join(', ')}
+          第一區: {frequentNumbers.firstArea.join(', ')}
         </div>
         <div style={{ marginRight: '10px' }}>
-          第二區: {lottoNumbers.secondArea}
+          第二區: {frequentNumbers.secondArea}
         </div>
-        <button onClick={handleGenerateFrequent}>第一區隨機 (不重複) + 第二區熱門號碼</button>
+        <button onClick={() => handleGenerateFrequent()}>第一區隨機 (不與歷史重複) + 第二區年度熱門號碼</button>
       </div>
     </div>
   );
