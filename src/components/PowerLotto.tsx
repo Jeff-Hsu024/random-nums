@@ -129,7 +129,7 @@ const PowerLotto = () => {
       )}
 
       {isLoading && (
-        <Loading text="載入中..." />
+        <Loading text="載入歷史資歷..." />
       )}
     </div>
   );
