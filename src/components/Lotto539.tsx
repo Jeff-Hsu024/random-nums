@@ -9,7 +9,7 @@ const Lotto539 = () => {
         numbers.push(randomNumber);
       }
     }
-    // numbers.sort((a, b) => a - b);
+    numbers.sort((a, b) => a - b);
     return numbers;
   };
 
