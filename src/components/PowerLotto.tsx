@@ -16,6 +16,7 @@ const PowerLotto = () => {
     const getHistoricalRecords = async () => {
       setIsLoadingUnique(true);
       setIsLoadingFrequent(true);
+      setIsLoadingFrequent(true);
       const records = await fetchAllLotteryRecords();
       setHistoricalRecords(records);
 
@@ -24,17 +25,22 @@ const PowerLotto = () => {
         const recordYear = new Date(record.lotteryDate).getFullYear();
         return currentYear === recordYear
       })
-      setFilterRecords(filterRecords)
+      setFilterRecords(filterRecords);
 
       setIsLoadingUnique(false);
       setIsLoadingFrequent(false);
 
       handleGenerateUnique();
-      handleGenerateFrequent();
     };
 
     getHistoricalRecords();
   }, []);
+
+  useEffect(() => {
+    if (!isLoadingFrequent) {
+      handleGenerateFrequent();
+    }
+  }, [filterRecords, isLoadingFrequent]);
 
   const generateLottoNumbers = () => {
     const firstAreaNumbers: number[] = [];
