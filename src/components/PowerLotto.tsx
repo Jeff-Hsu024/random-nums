@@ -23,11 +23,11 @@ const PowerLotto = () => {
       })
       setFilterRecords(filterRecords)
 
+      setIsLoading(false);
+
       handleGenerate()
       handleGenerateUnique()
       handleGenerateFrequent()
-
-      setIsLoading(false);
     };
 
     getHistoricalRecords();
@@ -99,7 +99,7 @@ const PowerLotto = () => {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-4 relative">
-       <h2 className="text-lg font-semibold mb-2">威力彩選號</h2>
+      <h2 className="text-lg font-semibold mb-2">威力彩選號</h2>
       {!isLoading && (
         <>
           {/* Row 1: Original Random */}

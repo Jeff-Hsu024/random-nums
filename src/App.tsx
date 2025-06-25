@@ -1,6 +1,3 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 import PowerLotto from './components/PowerLotto';
 import Lotto649 from './components/Lotto649';
@@ -8,10 +5,8 @@ import Lotto539 from './components/Lotto539';
 import Lotto39 from './components/Lotto39';
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <div className="bg-gray-100 p-4 grid grid-cols-2 gap-4">
+    <div className="container mx-auto w-full bg-gray-100 p-4 flex flex-col gap-4">
       <PowerLotto />
       <Lotto649 />
       <Lotto539 />
