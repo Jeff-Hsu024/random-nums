@@ -11,7 +11,7 @@ function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <div className="bg-gray-100 p-4">
+    <div className="bg-gray-100 p-4 grid grid-cols-2 gap-4">
       <PowerLotto />
       <Lotto649 />
       <Lotto539 />

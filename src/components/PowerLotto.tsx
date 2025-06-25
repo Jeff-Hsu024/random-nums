@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { fetchAllLotteryRecords, type LotteryRecord } from '../services/PowerLottoService';
 
 const PowerLotto = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [originalNumbers, setOriginalNumbers] = useState<{ firstArea: number[]; secondArea: number | null }>({ firstArea: [], secondArea: null });
   const [uniqueNumbers, setUniqueNumbers] = useState<{ firstArea: number[]; secondArea: number | null }>({ firstArea: [], secondArea: null });
   const [frequentNumbers, setFrequentNumbers] = useState<{ firstArea: number[]; secondArea: number | null }>({ firstArea: [], secondArea: null });
@@ -10,6 +11,7 @@ const PowerLotto = () => {
 
   useEffect(() => {
     const getHistoricalRecords = async () => {
+      setIsLoading(true);
       const records = await fetchAllLotteryRecords();
       setHistoricalRecords(records);
 
@@ -19,6 +21,12 @@ const PowerLotto = () => {
         return currentYear === recordYear
       })
       setFilterRecords(filterRecords)
+
+      handleGenerate()
+      handleGenerateUnique()
+      handleGenerateFrequent()
+
+      setIsLoading(false);
     };
 
     getHistoricalRecords();
@@ -89,41 +97,42 @@ const PowerLotto = () => {
   };
 
   return (
-    <div>
-      <h2>威力彩選號</h2>
+    <div className="bg-white rounded-lg shadow-md p-4 relative">
+       <h2 className="text-lg font-semibold mb-2">威力彩選號</h2>
+      {!isLoading && (
+        <>
+          {/* Row 1: Original Random */}
+          <div className="flex items-center mb-2">
+            <div className="mr-2">
+              第一區: {originalNumbers.firstArea.join(', ')} 第二區: {originalNumbers.secondArea}
+            </div>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleGenerate()}>隨機選號</button>
+          </div>
 
-      {/* Row 1: Original Random */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <div style={{ marginRight: '10px' }}>
-          第一區: {originalNumbers.firstArea.join(', ')}
-        </div>
-        <div style={{ marginRight: '10px' }}>
-          第二區: {originalNumbers.secondArea}
-        </div>
-        <button onClick={() => handleGenerate()}>隨機選號</button>
-      </div>
+          {/* Row 2: Unique Random */}
+          <div className="flex items-center mb-2">
+            <div className="mr-2">
+              第一區: {uniqueNumbers.firstArea.join(', ')} 第二區: {uniqueNumbers.secondArea}
+            </div>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleGenerateUnique()}>第一區隨機 (不與歷史重複)</button>
+          </div>
 
-      {/* Row 2: Unique Random */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <div style={{ marginRight: '10px' }}>
-          第一區: {uniqueNumbers.firstArea.join(', ')}
-        </div>
-        <div style={{ marginRight: '10px' }}>
-          第二區: {uniqueNumbers.secondArea}
-        </div>
-        <button onClick={() => handleGenerateUnique()}>第一區隨機 (不與歷史重複)</button>
-      </div>
+          {/* Row 3: Unique Random + Frequent Special */}
+          <div className="flex items-center mb-2">
+            <div className="mr-2">
+              第一區: {frequentNumbers.firstArea.join(', ')} 第二區: {frequentNumbers.secondArea}
+            </div>
+            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleGenerateFrequent()}>第一區隨機 (不與歷史重複) + 第二區年度熱門號碼</button>
+          </div>
+        </>
+      )}
 
-      {/* Row 3: Unique Random + Frequent Special */}
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <div style={{ marginRight: '10px' }}>
-          第一區: {frequentNumbers.firstArea.join(', ')}
+      {isLoading && (
+        <div className="absolute top-0 left-0 w-full h-full bg-gray-200 opacity-50 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-blue-500"></div>
+          <div>loading block</div>
         </div>
-        <div style={{ marginRight: '10px' }}>
-          第二區: {frequentNumbers.secondArea}
-        </div>
-        <button onClick={() => handleGenerateFrequent()}>第一區隨機 (不與歷史重複) + 第二區年度熱門號碼</button>
-      </div>
+      )}
     </div>
   );
 };
