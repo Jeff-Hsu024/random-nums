@@ -107,7 +107,7 @@ const PowerLotto = () => {
             <div className="mr-2">
               第一區: {originalNumbers.firstArea.join(', ')} 第二區: {originalNumbers.secondArea}
             </div>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleGenerate()}>隨機選號</button>
+            <button className='btn' onClick={() => handleGenerate()}>隨機選號</button>
           </div>
 
           {/* Row 2: Unique Random */}
@@ -115,7 +115,7 @@ const PowerLotto = () => {
             <div className="mr-2">
               第一區: {uniqueNumbers.firstArea.join(', ')} 第二區: {uniqueNumbers.secondArea}
             </div>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleGenerateUnique()}>第一區隨機 (不與歷史重複)</button>
+            <button className='btn' onClick={() => handleGenerateUnique()}>第一區隨機 (不與歷史重複)</button>
           </div>
 
           {/* Row 3: Unique Random + Frequent Special */}
@@ -123,13 +123,13 @@ const PowerLotto = () => {
             <div className="mr-2">
               第一區: {frequentNumbers.firstArea.join(', ')} 第二區: {frequentNumbers.secondArea}
             </div>
-            <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={() => handleGenerateFrequent()}>第一區隨機 (不與歷史重複) + 第二區年度熱門號碼</button>
+            <button className='btn' onClick={() => handleGenerateFrequent()}>第一區隨機 (不與歷史重複) + 第二區年度熱門號碼</button>
           </div>
         </>
       )}
 
       {isLoading && (
-        <Loading text="載入歷史資歷..." />
+        <Loading text="載入歷史資料..." />
       )}
     </div>
   );

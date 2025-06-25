@@ -26,7 +26,7 @@ const Lotto39 = () => {
         <div className="mr-2">
           {lottoNumbers.join(', ')}
         </div>
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" onClick={handleGenerate}>重新產生</button>
+        <button className="btn" onClick={handleGenerate}>重新產生</button>
       </div>
     </div>
   );
