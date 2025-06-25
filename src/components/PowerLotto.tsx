@@ -62,6 +62,7 @@ const PowerLotto = () => {
     )) {
       newNumbers = generateLottoNumbers();
     }
+
     return newNumbers;
   };
 
@@ -105,7 +106,7 @@ const PowerLotto = () => {
           {/* Row 1: Original Random */}
           <div className="flex items-center mb-2">
             <div className="mr-2">
-              第一區: {originalNumbers.firstArea.join(', ')} 第二區: {originalNumbers.secondArea}
+                            第一區: {originalNumbers.firstArea.map(num => num < 10 ? '0' + num : num).join(', ')} 第二區: {originalNumbers.secondArea != null ? (originalNumbers.secondArea < 10 ? '0' + originalNumbers.secondArea : originalNumbers.secondArea) : null}
             </div>
             <button className='btn' onClick={() => handleGenerate()}>隨機選號</button>
           </div>
@@ -113,7 +114,7 @@ const PowerLotto = () => {
           {/* Row 2: Unique Random */}
           <div className="flex items-center mb-2">
             <div className="mr-2">
-              第一區: {uniqueNumbers.firstArea.join(', ')} 第二區: {uniqueNumbers.secondArea}
+              第一區: {uniqueNumbers.firstArea.map(num => num < 10 ? '0' + num : num).join(', ')} 第二區: {uniqueNumbers.secondArea != null ? (uniqueNumbers.secondArea < 10 ? '0' + uniqueNumbers.secondArea : uniqueNumbers.secondArea) : null}
             </div>
             <button className='btn' onClick={() => handleGenerateUnique()}>第一區隨機 (不與歷史重複)</button>
           </div>
@@ -121,7 +122,7 @@ const PowerLotto = () => {
           {/* Row 3: Unique Random + Frequent Special */}
           <div className="flex items-center mb-2">
             <div className="mr-2">
-              第一區: {frequentNumbers.firstArea.join(', ')} 第二區: {frequentNumbers.secondArea}
+              第一區: {frequentNumbers.firstArea.map(num => num < 10 ? '0' + num : num).join(', ')} 第二區: {frequentNumbers.secondArea != null ? (frequentNumbers.secondArea < 10 ? '0' + frequentNumbers.secondArea : frequentNumbers.secondArea) : null}
             </div>
             <button className='btn' onClick={() => handleGenerateFrequent()}>第一區隨機 (不與歷史重複) + 第二區年度熱門號碼</button>
           </div>

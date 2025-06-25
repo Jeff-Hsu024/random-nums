@@ -24,7 +24,7 @@ const Lotto539 = () => {
       <h2 className="text-lg font-semibold mb-2">今彩539選號</h2>
       <div className="flex items-center mb-2">
         <div className="mr-2">
-          {lottoNumbers.join(', ')}
+          {lottoNumbers.map(num => num < 10 ? '0' + num : num).join(', ')}
         </div>
         <button className="btn" onClick={handleGenerate}>重新產生</button>
       </div>
