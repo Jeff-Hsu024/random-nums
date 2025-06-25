@@ -3,8 +3,10 @@ import { fetchAllLotteryRecords, type LotteryRecord } from '../services/PowerLot
 import Loading from './Loading';
 
 const PowerLotto = () => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [originalNumbers, setOriginalNumbers] = useState<{ firstArea: number[]; secondArea: number | null }>({ firstArea: [], secondArea: null });
+  const [isLoadingOriginal, setIsLoadingOriginal] = useState(false);
+  const [isLoadingUnique, setIsLoadingUnique] = useState(true);
+  const [isLoadingFrequent, setIsLoadingFrequent] = useState(true);
+
   const [uniqueNumbers, setUniqueNumbers] = useState<{ firstArea: number[]; secondArea: number | null }>({ firstArea: [], secondArea: null });
   const [frequentNumbers, setFrequentNumbers] = useState<{ firstArea: number[]; secondArea: number | null }>({ firstArea: [], secondArea: null });
   const [historicalRecords, setHistoricalRecords] = useState<LotteryRecord[]>([]);
@@ -12,7 +14,8 @@ const PowerLotto = () => {
 
   useEffect(() => {
     const getHistoricalRecords = async () => {
-      setIsLoading(true);
+      setIsLoadingUnique(true);
+      setIsLoadingFrequent(true);
       const records = await fetchAllLotteryRecords();
       setHistoricalRecords(records);
 
@@ -23,11 +26,11 @@ const PowerLotto = () => {
       })
       setFilterRecords(filterRecords)
 
-      setIsLoading(false);
+      setIsLoadingUnique(false);
+      setIsLoadingFrequent(false);
 
-      handleGenerate()
-      handleGenerateUnique()
-      handleGenerateFrequent()
+      handleGenerateUnique();
+      handleGenerateFrequent();
     };
 
     getHistoricalRecords();
@@ -51,6 +54,8 @@ const PowerLotto = () => {
     };
   };
 
+  const [originalNumbers, setOriginalNumbers] = useState<{ firstArea: number[]; secondArea: number | null }>(generateLottoNumbers());
+
   const handleGenerate = () => {
     setOriginalNumbers(generateLottoNumbers());
   };
@@ -67,6 +72,15 @@ const PowerLotto = () => {
   };
 
   const getMostFrequentSpecialNumber = () => {
+    if (!filterRecords || !filterRecords.length) {
+      const currentYear = new Date().getFullYear();
+      const filterRecords = historicalRecords.filter(record => {
+        const recordYear = new Date(record.lotteryDate).getFullYear();
+        return currentYear === recordYear
+      })
+      setFilterRecords(filterRecords)
+    }
+
     const counts: { [key: number]: number } = {};
     filterRecords.forEach(record => {
       const specialNumber = record.specialNumber;
@@ -101,37 +115,37 @@ const PowerLotto = () => {
   return (
     <div className="bg-white rounded-lg shadow-md p-4 relative">
       <h2 className="text-lg font-semibold mb-2">威力彩選號</h2>
-      {!isLoading && (
-        <>
-          {/* Row 1: Original Random */}
-          <div className="flex items-center mb-2">
-            <div className="mr-2">
-                            第一區: {originalNumbers.firstArea.map(num => num < 10 ? '0' + num : num).join(', ')} 第二區: {originalNumbers.secondArea != null ? (originalNumbers.secondArea < 10 ? '0' + originalNumbers.secondArea : originalNumbers.secondArea) : null}
-            </div>
-            <button className='btn' onClick={() => handleGenerate()}>隨機選號</button>
+
+      {/* Row 1: Original Random */}
+      <div className="flex items-center mb-2">
+        <div className="mr-2">
+          第一區: {originalNumbers.firstArea.map(num => num < 10 ? '0' + num : num).join(', ')} 第二區: {originalNumbers.secondArea != null ? (originalNumbers.secondArea < 10 ? '0' + originalNumbers.secondArea : originalNumbers.secondArea) : null}
+        </div>
+        <button className='btn' onClick={() => handleGenerate()}>隨機選號</button>
+      </div>
+
+      {/* Row 2: Unique Random */}
+      <div className="flex items-center mb-2">
+        {!isLoadingUnique &&
+          <div className="mr-2">
+            第一區: {uniqueNumbers.firstArea.map(num => num < 10 ? '0' + num : num).join(', ')} 第二區: {uniqueNumbers.secondArea != null ? (uniqueNumbers.secondArea < 10 ? '0' + uniqueNumbers.secondArea : uniqueNumbers.secondArea) : null}
+          </div>
+        }
+        <button className='btn' onClick={() => handleGenerateUnique()} disabled={isLoadingUnique}>第一區隨機 (不與歷史重複)</button>
+        {isLoadingUnique && <Loading text="載入歷史資料..." />}
+      </div>
+
+      {/* Row 3: Unique Random + Frequent Special */}
+      <div className="flex items-center mb-2">
+        {!isLoadingFrequent &&
+          <div className="mr-2">
+            第一區: {frequentNumbers.firstArea.map(num => num < 10 ? '0' + num : num).join(', ')} 第二區: {frequentNumbers.secondArea != null ? (frequentNumbers.secondArea < 10 ? '0' + frequentNumbers.secondArea : frequentNumbers.secondArea) : null}
           </div>
 
-          {/* Row 2: Unique Random */}
-          <div className="flex items-center mb-2">
-            <div className="mr-2">
-              第一區: {uniqueNumbers.firstArea.map(num => num < 10 ? '0' + num : num).join(', ')} 第二區: {uniqueNumbers.secondArea != null ? (uniqueNumbers.secondArea < 10 ? '0' + uniqueNumbers.secondArea : uniqueNumbers.secondArea) : null}
-            </div>
-            <button className='btn' onClick={() => handleGenerateUnique()}>第一區隨機 (不與歷史重複)</button>
-          </div>
-
-          {/* Row 3: Unique Random + Frequent Special */}
-          <div className="flex items-center mb-2">
-            <div className="mr-2">
-              第一區: {frequentNumbers.firstArea.map(num => num < 10 ? '0' + num : num).join(', ')} 第二區: {frequentNumbers.secondArea != null ? (frequentNumbers.secondArea < 10 ? '0' + frequentNumbers.secondArea : frequentNumbers.secondArea) : null}
-            </div>
-            <button className='btn' onClick={() => handleGenerateFrequent()}>第一區隨機 (不與歷史重複) + 第二區年度熱門號碼</button>
-          </div>
-        </>
-      )}
-
-      {isLoading && (
-        <Loading text="載入歷史資料..." />
-      )}
+        }
+        <button className='btn' onClick={() => handleGenerateFrequent()} disabled={isLoadingFrequent}>第一區隨機 (不與歷史重複) + 第二區年度熱門號碼</button>
+        {isLoadingFrequent && <Loading text="載入歷史資料..." />}
+      </div>
     </div>
   );
 };
